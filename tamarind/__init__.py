@@ -9,6 +9,7 @@ import os
 import docker
 import py2neo
 
+
 class Neo4jProvisioner(abc.ABC):
     """
     Abstract base class for Neo4j database provisioner.
@@ -42,7 +43,6 @@ class Neo4jProvisioner(abc.ABC):
 
     def __getitem__(self, key: str) -> py2neo.Graph:
         ...
-
 
 
 class Neo4jDockerProvisioner:
@@ -115,16 +115,11 @@ class Neo4jDockerProvisioner:
                 "NEO4J_dbms_connector_bolt_listen__address": f":{port}",
                 "NEO4J_dbms_connector_bolt_advertised__address": f":{port}",
             },
-            volumes={
-                f"{os.getcwd()}/data/{name}": {"bind": "/data", "mode": "rw"}
-            },
-            ports={
-                port: port,
-            },
+            volumes={f"{os.getcwd()}/data/{name}": {"bind": "/data", "mode": "rw"}},
+            ports={port: port},
             network_mode="bridge",
         )
         return port
-
 
     def ps(self) -> Dict[str, int]:
         """
@@ -134,12 +129,11 @@ class Neo4jDockerProvisioner:
         """
         return {
             c.name: (
-                self.docker.api.inspect_container(c.id)['NetworkSettings']['Ports']
+                self.docker.api.inspect_container(c.id)["NetworkSettings"]["Ports"]
             )
             for c in self.docker.containers.list()
             if "tamarind_" in c.name
         }
-
 
     def __getitem__(self, key: str) -> py2neo.Graph:
         """
@@ -154,5 +148,7 @@ class Neo4jDockerProvisioner:
 
         """
         cport = self.ps()[f"tamarind_{key}"]
-        cport = cport[max(cport.keys())][0]['HostPort']
-        return py2neo.Graph(f"bolt://localhost:{cport}", username="neo4j", password="neo4jpw")
+        cport = cport[max(cport.keys())][0]["HostPort"]
+        return py2neo.Graph(
+            f"bolt://localhost:{cport}", username="neo4j", password="neo4jpw"
+        )
