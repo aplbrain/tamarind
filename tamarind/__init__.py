@@ -30,7 +30,7 @@ class Neo4jProvisioner(abc.ABC):
             int
 
         """
-        ...
+        return NotImplemented
 
     def ps(self) -> Dict[str, int]:
         """
@@ -39,10 +39,10 @@ class Neo4jProvisioner(abc.ABC):
         Arguments:
             None
         """
-        ...
+        return NotImplemented
 
     def __getitem__(self, key: str) -> py2neo.Graph:
-        ...
+        return NotImplemented
 
 
 class Neo4jDockerProvisioner:
@@ -120,6 +120,10 @@ class Neo4jDockerProvisioner:
             network_mode="bridge",
         )
         return port
+
+    def stop(self, key: str) -> None:
+        self.docker.containers.get(f"tamarind_{key}").stop()
+        self.docker.containers.get(f"tamarind_{key}").remove()
 
     def ps(self) -> Dict[str, int]:
         """
