@@ -15,7 +15,7 @@ from setuptools import find_packages, setup, Command
 NAME = "tamarind"
 DESCRIPTION = "More Neo4j than you can shake a cat at"
 URL = "https://github.com/FitMango/tamarind"
-EMAIL = "foss@fitmango.com"
+EMAIL = "opensource@fitmango.com"
 AUTHOR = "Jordan Matelsky"
 REQUIRES_PYTHON = ">=3.6.0"
 VERSION = "0.1.0"
