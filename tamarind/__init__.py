@@ -99,7 +99,11 @@ class Neo4jDockerProvisioner:
         """
         return max([7687, *self.ports.values()]) + 1
 
-    def start(self, name: str, wait: bool = False) -> int:
+    def start(
+        self, name: str, wait: bool = False,
+        data_path: str = None, import_path: str = None,
+        use_data_path: bool = True, use_import_path: bool = False
+    ) -> int:
         """
         Start a new database.
 
@@ -107,6 +111,13 @@ class Neo4jDockerProvisioner:
             name (str): The name of the new instance. Any string, no spaces.
             wait (bool): Whether to wait upon working graph before returning.
                 Defaults to False, and currently does not work.
+            data_path (str): The path to data. Only used if use_data_path is
+                set to True.
+            import_path (str): The path to point to in order to run an import.
+                Only used if use_import_path is set to True.
+            use_data_path (bool: True): If /data should be mounted.
+            use_import_path (bool: False): If /import should be mounted. Note
+                that unlike use_data_path, this defaults to False!
 
         Returns:
             int: The port on which this container is listening (bolt://)
@@ -114,6 +125,17 @@ class Neo4jDockerProvisioner:
         """
         if name in self.ps():
             raise ValueError(f"Cannot start {name}, already running!")
+
+        volumes = {}
+
+        if use_data_path:
+            if data_path is None:
+                data_path = f"{os.getcwd()}/data/{name}"
+            volumes[data_path] = {"bind": "/data", "mode": "rw"}
+        if use_import_path:
+            if import_path is None:
+                import_path = f"{os.getcwd()}/import/{name}"
+            volumes[import_path] = {"bind": "/import", "mode": "ro"}
 
         port = self._next_port()
         _running_container = self.docker.containers.run(
@@ -129,7 +151,7 @@ class Neo4jDockerProvisioner:
                 "NEO4J_dbms_connector_bolt_listen__address": f":{port}",
                 "NEO4J_dbms_connector_bolt_advertised__address": f":{port}",
             },
-            volumes={f"{os.getcwd()}/data/{name}": {"bind": "/data", "mode": "rw"}},
+            volumes=volumes,
             ports={port: port},
             network_mode="bridge",
         )
