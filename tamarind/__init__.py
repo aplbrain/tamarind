@@ -16,7 +16,7 @@ limitations under the License.
 Tamarind base implementation Jan 17 2018
 """
 import abc
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 import os
 
@@ -102,8 +102,9 @@ class Neo4jDockerProvisioner:
     def start(
         self, name: str, wait: bool = False,
         data_path: str = None, import_path: str = None,
-        use_data_path: bool = True, use_import_path: bool = False
-    ) -> int:
+        use_data_path: bool = True, use_import_path: bool = False,
+        mount_browser: bool = False
+    ) -> Tuple[str, int]:
         """
         Start a new database.
 
@@ -118,9 +119,12 @@ class Neo4jDockerProvisioner:
             use_data_path (bool: True): If /data should be mounted.
             use_import_path (bool: False): If /import should be mounted. Note
                 that unlike use_data_path, this defaults to False!
+            mount_browser (bool: False): Whether to mount the browser-friendly
+                port 7474. Note that this only works on ONE container at a time
+                because Tamarind does not yet support multiport HTTP.
 
         Returns:
-            int: The port on which this container is listening (bolt://)
+            (str, int): The port on which this container is listening (bolt://)
 
         """
         if name in self.ps():
@@ -128,16 +132,20 @@ class Neo4jDockerProvisioner:
 
         volumes = {}
 
-        if use_data_path:
+        if use_data_path or data_path:
             if data_path is None:
                 data_path = f"{os.getcwd()}/data/{name}"
             volumes[data_path] = {"bind": "/data", "mode": "rw"}
-        if use_import_path:
+        if use_import_path or import_path:
             if import_path is None:
                 import_path = f"{os.getcwd()}/import/{name}"
             volumes[import_path] = {"bind": "/import", "mode": "ro"}
 
         port = self._next_port()
+        ports = {port: port}
+        if mount_browser:
+            ports[7474] = 7474
+
         _running_container = self.docker.containers.run(
             "neo4j:3.4",
             name=f"tamarind_{name}",
@@ -152,14 +160,16 @@ class Neo4jDockerProvisioner:
                 "NEO4J_dbms_connector_bolt_advertised__address": f":{port}",
             },
             volumes=volumes,
-            ports={port: port},
+            ports=ports,
             network_mode="bridge",
         )
-        return port
+        return (_running_container, port)
 
     def stop(self, key: str) -> None:
         self.docker.containers.get(f"tamarind_{key}").stop()
-        self.docker.containers.get(f"tamarind_{key}").remove()
+        if not self._autoremove_containers:
+            # If autoremove is True, then this is redundant and will fail.
+            self.docker.containers.get(f"tamarind_{key}").remove()
 
     def ps(self) -> Dict[str, int]:
         """
@@ -168,7 +178,7 @@ class Neo4jDockerProvisioner:
         Wraps docker ps.
         """
         return {
-            c.name: (
+            c.name.split("tamarind_")[1]: (
                 int(
                     list(filter(
                         lambda x: x,

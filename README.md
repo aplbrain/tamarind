@@ -1,6 +1,9 @@
 <h3 align=center>tamarind</h3>
 <h3 align=center>🥭</h3>
 <h6 align=center>manage multiple ephemeral neo4j containers</h6>
+<p align=center>
+<img alt="PyPI" src="https://img.shields.io/pypi/v/tamarind.svg?logo=python&logoColor=orange&style=for-the-badge">
+</p>
 
 ## Usage
 
