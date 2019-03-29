@@ -120,7 +120,7 @@ class Neo4jDockerProvisioner:
             "neo4j:3.4",
             name=f"tamarind_{name}",
             command="""
-            bash -c './bin/neo4j-admin set-initial-password neo4jpw && ./bin/neo4j start && tail -f /dev/null'""",
+            bash -c './bin/neo4j-admin set-initial-password neo4jpw; ./bin/neo4j start && tail -f /dev/null'""",
             auto_remove=self._autoremove_containers,
             detach=True,
             environment={
@@ -147,7 +147,12 @@ class Neo4jDockerProvisioner:
         """
         return {
             c.name: (
-                self.docker.api.inspect_container(c.id)["NetworkSettings"]["Ports"]
+                int(
+                    list(filter(
+                        lambda x: x,
+                        self.docker.api.inspect_container(c.id)["NetworkSettings"]["Ports"].values()
+                    ))[0][0]['HostPort']
+                )
             )
             for c in self.docker.containers.list()
             if "tamarind_" in c.name
@@ -166,7 +171,6 @@ class Neo4jDockerProvisioner:
 
         """
         cport = self.ps()[f"tamarind_{key}"]
-        cport = cport[max(cport.keys())][0]["HostPort"]
         return py2neo.Graph(
             f"bolt://localhost:{cport}", username="neo4j", password="neo4jpw"
         )
