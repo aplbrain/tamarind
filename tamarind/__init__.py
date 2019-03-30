@@ -103,7 +103,9 @@ class Neo4jDockerProvisioner:
         self, name: str, wait: bool = False,
         data_path: str = None, import_path: str = None,
         use_data_path: bool = True, use_import_path: bool = False,
-        mount_browser: bool = False
+        mount_browser: bool = False,
+        run_before: str = "",
+        run_after: str = "",
     ) -> Tuple[str, int]:
         """
         Start a new database.
@@ -146,11 +148,17 @@ class Neo4jDockerProvisioner:
         if mount_browser:
             ports[7474] = 7474
 
+        if run_before:
+            run_before += " && "
+
+        if run_after:
+            run_after = " && " + run_after
+
         _running_container = self.docker.containers.run(
             "neo4j:3.4",
             name=f"tamarind_{name}",
-            command="""
-            bash -c './bin/neo4j-admin set-initial-password neo4jpw; ./bin/neo4j start && tail -f /dev/null'""",
+            command=f"""
+            bash -c '{run_before} ./bin/neo4j-admin set-initial-password neo4jpw; ./bin/neo4j start && tail -f /dev/null {run_after}'""",
             auto_remove=self._autoremove_containers,
             detach=True,
             environment={
@@ -202,7 +210,7 @@ class Neo4jDockerProvisioner:
             py2neo.Graph: A pointer to the database
 
         """
-        cport = self.ps()[f"tamarind_{key}"]
+        cport = self.ps()[f"{key}"]
         return py2neo.Graph(
             f"bolt://localhost:{cport}", username="neo4j", password="neo4jpw"
         )
