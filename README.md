@@ -35,6 +35,18 @@ Now you can access this graph database through py2neo:
 <py2neo.Graph>
 ```
 
+The object returned is a [`py2neo.database.Graph`](https://py2neo.org/v4/database.html#py2neo.database.Graph) object:
+
+```python
+>>> N["MyDatabase"].run("MATCH (a:Person) RETURN a.name, a.born LIMIT 4").data()
+[{'a.born': 1964, 'a.name': 'Keanu Reeves'},
+ {'a.born': 1967, 'a.name': 'Carrie-Anne Moss'},
+ {'a.born': 1961, 'a.name': 'Laurence Fishburne'},
+ {'a.born': 1960, 'a.name': 'Hugo Weaving'}]
+
+
+```
+
 ### List all
 
 ```python
