@@ -79,3 +79,8 @@ Licensed under Apache 2.0. Reach out to opensource@fitmango.com with questions.
 > WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 > See the License for the specific language governing permissions and
 > limitations under the License.
+
+---
+
+<h6 align=center>Made with ❤️ at <a href="https://github.com/fitmango">🥭</a></h6>
+
