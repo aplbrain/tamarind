@@ -3,6 +3,8 @@
 <h6 align=center>manage multiple ephemeral neo4j containers</h6>
 <p align=center>
 <a href="https://pypi.org/project/tamarind/"><img alt="PyPI" src="https://img.shields.io/pypi/v/tamarind.svg?logo=python&logoColor=orange&style=for-the-badge"></a>
+<img src="https://img.shields.io/github/issues/FitMango/tamarind.svg?style=for-the-badge" />
+<img src="https://img.shields.io/github/license/FitMango/tamarind.svg?style=for-the-badge" />
 </p>
 
 ## Installation
