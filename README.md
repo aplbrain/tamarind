@@ -3,6 +3,8 @@
 <h6 align=center>manage multiple ephemeral neo4j containers</h6>
 <p align=center>
 <a href="https://pypi.org/project/tamarind/"><img alt="PyPI" src="https://img.shields.io/pypi/v/tamarind.svg?logo=python&logoColor=orange&style=for-the-badge"></a>
+<img src="https://img.shields.io/github/issues/FitMango/tamarind.svg?style=for-the-badge" />
+<img src="https://img.shields.io/github/license/FitMango/tamarind.svg?style=for-the-badge" />
 </p>
 
 ## Installation
@@ -33,6 +35,18 @@ Now you can access this graph database through py2neo:
 ```python
 >>> N["MyDatabase"]
 <py2neo.Graph>
+```
+
+The object returned is a [`py2neo.database.Graph`](https://py2neo.org/v4/database.html#py2neo.database.Graph) object:
+
+```python
+>>> N["MyDatabase"].run("MATCH (a:Person) RETURN a.name, a.born LIMIT 4").data()
+[{'a.born': 1964, 'a.name': 'Keanu Reeves'},
+ {'a.born': 1967, 'a.name': 'Carrie-Anne Moss'},
+ {'a.born': 1961, 'a.name': 'Laurence Fishburne'},
+ {'a.born': 1960, 'a.name': 'Hugo Weaving'}]
+
+
 ```
 
 ### List all
@@ -67,3 +81,8 @@ Licensed under Apache 2.0. Reach out to opensource@fitmango.com with questions.
 > WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 > See the License for the specific language governing permissions and
 > limitations under the License.
+
+---
+
+<h6 align=center>Made with ❤️ at <a href="https://github.com/fitmango">🥭</a></h6>
+
