@@ -1,3 +1,6 @@
+- 0.1.3
+    - Enable custom Docker image specification with `image_name` flag in `start()` call
+    - Upgrade default neo4j distribution to 3.5
 - 0.1.2
     - Fix pip install dependency management
 - 0.1.1

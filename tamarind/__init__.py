@@ -100,12 +100,17 @@ class Neo4jDockerProvisioner:
         return max([7687, *self.ports.values()]) + 1
 
     def start(
-        self, name: str, wait: bool = False,
-        data_path: str = None, import_path: str = None,
-        use_data_path: bool = True, use_import_path: bool = False,
+        self,
+        name: str,
+        wait: bool = False,
+        data_path: str = None,
+        import_path: str = None,
+        use_data_path: bool = True,
+        use_import_path: bool = False,
         mount_browser: bool = False,
         run_before: str = "",
         run_after: str = "",
+        image_name: str = "neo4j:3.8",
     ) -> Tuple[str, int]:
         """
         Start a new database.
@@ -124,6 +129,10 @@ class Neo4jDockerProvisioner:
             mount_browser (bool: False): Whether to mount the browser-friendly
                 port 7474. Note that this only works on ONE container at a time
                 because Tamarind does not yet support multiport HTTP.
+            run_before (str): A bash command to run prior to starting the db.
+            run_before (str): A bash command to run prior to starting the db.
+            image_name (str: "neo4j:3.8"): An image to run, if different from
+                the default Neo4j database image.
 
         Returns:
             (str, int): The port on which this container is listening (bolt://)
@@ -155,7 +164,7 @@ class Neo4jDockerProvisioner:
             run_after = " && " + run_after
 
         _running_container = self.docker.containers.run(
-            "neo4j:3.4",
+            image_name,
             name=f"tamarind_{name}",
             command=f"""
             bash -c '{run_before} ./bin/neo4j-admin set-initial-password neo4jpw; ./bin/neo4j start && tail -f /dev/null {run_after}'""",
@@ -188,10 +197,14 @@ class Neo4jDockerProvisioner:
         return {
             c.name.split("tamarind_")[1]: (
                 int(
-                    list(filter(
-                        lambda x: x,
-                        self.docker.api.inspect_container(c.id)["NetworkSettings"]["Ports"].values()
-                    ))[0][0]['HostPort']
+                    list(
+                        filter(
+                            lambda x: x,
+                            self.docker.api.inspect_container(c.id)["NetworkSettings"][
+                                "Ports"
+                            ].values(),
+                        )
+                    )[0][0]["HostPort"]
                 )
             )
             for c in self.docker.containers.list()
