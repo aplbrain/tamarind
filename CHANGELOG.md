@@ -1,4 +1,6 @@
-- **[0.1.3](https://pypi.org/project/tamarind/0.1.3/) (September 4, 2019)**
+- **[0.1.4](https://pypi.org/project/tamarind/0.1.4/) (September 4, 2019)**
+    - Fix typo Neo4j version
+- **[0.1.3](https://pypi.org/project/tamarind/0.1.3/) (September 3, 2019)**
     - Enable custom Docker image specification with `image_name` flag in `start()` call
     - Upgrade default neo4j distribution to 3.5
 - 0.1.2

@@ -110,7 +110,7 @@ class Neo4jDockerProvisioner:
         mount_browser: bool = False,
         run_before: str = "",
         run_after: str = "",
-        image_name: str = "neo4j:3.8",
+        image_name: str = "neo4j:3.5",
     ) -> Tuple[str, int]:
         """
         Start a new database.
@@ -131,7 +131,7 @@ class Neo4jDockerProvisioner:
                 because Tamarind does not yet support multiport HTTP.
             run_before (str): A bash command to run prior to starting the db.
             run_before (str): A bash command to run prior to starting the db.
-            image_name (str: "neo4j:3.8"): An image to run, if different from
+            image_name (str: "neo4j:3.5"): An image to run, if different from
                 the default Neo4j database image.
 
         Returns:
