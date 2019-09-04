@@ -17,11 +17,13 @@ Tamarind base implementation Jan 17 2018
 """
 import abc
 from typing import Dict, List, Tuple
-
+import time
 import os
 
 import docker
 import py2neo
+
+_DEFAULT_SLEEP_INCREMENT = 3.0
 
 
 class Neo4jProvisioner(abc.ABC):
@@ -102,7 +104,7 @@ class Neo4jDockerProvisioner:
     def start(
         self,
         name: str,
-        wait: bool = False,
+        wait: bool = True,
         data_path: str = None,
         import_path: str = None,
         use_data_path: bool = True,
@@ -111,6 +113,7 @@ class Neo4jDockerProvisioner:
         run_before: str = "",
         run_after: str = "",
         image_name: str = "neo4j:3.5",
+        wait_attempt_limit: int = 20,
     ) -> Tuple[str, int]:
         """
         Start a new database.
@@ -118,7 +121,7 @@ class Neo4jDockerProvisioner:
         Arguments:
             name (str): The name of the new instance. Any string, no spaces.
             wait (bool): Whether to wait upon working graph before returning.
-                Defaults to False, and currently does not work.
+                Defaults to True.
             data_path (str): The path to data. Only used if use_data_path is
                 set to True.
             import_path (str): The path to point to in order to run an import.
@@ -133,6 +136,9 @@ class Neo4jDockerProvisioner:
             run_before (str): A bash command to run prior to starting the db.
             image_name (str: "neo4j:3.5"): An image to run, if different from
                 the default Neo4j database image.
+            wait_attempt_limit (int: 20): How many times to check the container
+                for signs of life before throwing an error. These are separated
+                by 3 seconds, so the default timeout is 1 minute.
 
         Returns:
             (str, int): The port on which this container is listening (bolt://)
@@ -180,6 +186,24 @@ class Neo4jDockerProvisioner:
             ports=ports,
             network_mode="bridge",
         )
+        if wait:
+            attempts = 0
+            # Loop until you get bored or hit a timeout:
+            tic = time.time()
+            while attempts < wait_attempt_limit:
+                attempts += 1
+                time.sleep(_DEFAULT_SLEEP_INCREMENT)
+                try:
+                    self[name].run("MATCH (a) RETURN a LIMIT 1")
+                    break
+                except:
+                    pass
+            else:
+                elapsed = time.time() - tic
+                raise ValueError(
+                    f"Timeout encountered after {elapsed}s. If you are importing a very large graph, consider increasing your `wait` argument to `Tamarind#start()`."
+                )
+
         return (_running_container, port)
 
     def stop(self, key: str) -> None:
