@@ -18,7 +18,7 @@ URL = "https://github.com/FitMango/tamarind"
 EMAIL = "opensource@fitmango.com"
 AUTHOR = "Jordan Matelsky"
 REQUIRES_PYTHON = ">=3.6.0"
-VERSION = "0.1.4"
+VERSION = "0.1.5"
 
 # What packages are required for this module to be executed?
 REQUIRED = ["py2neo", "docker"]

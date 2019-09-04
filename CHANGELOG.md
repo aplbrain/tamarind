@@ -1,3 +1,5 @@
+- **[0.1.5] (Unreleased)**
+    - Add wait-for-boot capability under `wait` flag
 - **[0.1.4](https://pypi.org/project/tamarind/0.1.4/) (September 4, 2019)**
     - Fix typo Neo4j version
 - **[0.1.3](https://pypi.org/project/tamarind/0.1.3/) (September 3, 2019)**
