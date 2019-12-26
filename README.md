@@ -7,6 +7,8 @@
 <img src="https://img.shields.io/github/license/FitMango/tamarind.svg?style=for-the-badge" />
 </p>
 
+`tamarind` is a system that manages Neo4j databases by provisioning Docker container resources for you. The user-facing API provides access to a dictionary-like lookup for your databases, and allows you to start and stop database servers on the fly.
+
 ## Installation
 
 Install from PyPI using pip:
