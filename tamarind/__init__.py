@@ -1,5 +1,5 @@
 """
-Copyright 2019 FitMango.
+Copyright 2020 FitMango.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this codebase except in compliance with the License.
