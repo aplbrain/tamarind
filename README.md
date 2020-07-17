@@ -17,7 +17,7 @@ Install from PyPI using pip:
 pip3 install tamarind
 ```
 
-You will need Docker already installed if you intend to use the Docker provisioning service.
+You will need Docker already installed if you intend to use the Docker provisioning service. You can install Docker with the script from `https://get.docker.com/`.
 
 
 ## Usage
@@ -70,7 +70,7 @@ The object returned is a [`py2neo.database.Graph`](https://py2neo.org/v4/databas
 
 Licensed under Apache 2.0. Reach out to opensource@fitmango.com with questions.
 
-> Copyright 2019 FitMango.
+> Copyright 2020 FitMango.
 >
 > Licensed under the Apache License, Version 2.0 (the "License");
 > you may not use this codebase except in compliance with the License.
