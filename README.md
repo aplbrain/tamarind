@@ -66,11 +66,15 @@ The object returned is a [`py2neo.database.Graph`](https://py2neo.org/v4/databas
 ['MyDatabase']
 ```
 
+## Custom Provisioners
+
+If you provision Neo4j instances via resources other than Docker (e.g. via AWS EC2 AMIs), you can extend the `Neo4jProvisioner` class with `start` and `ps` function calls (`stop` is an optional implementation in Tamarind).
+
 ## Legal
 
 Licensed under Apache 2.0. Reach out to opensource@fitmango.com with questions.
 
-> Copyright 2020 FitMango.
+> Copyright 2021 FitMango.
 >
 > Licensed under the Apache License, Version 2.0 (the "License");
 > you may not use this codebase except in compliance with the License.
