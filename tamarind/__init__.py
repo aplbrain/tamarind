@@ -1,5 +1,5 @@
 """
-Copyright 2020 FitMango.
+Copyright 2019-2021 FitMango.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this codebase except in compliance with the License.
@@ -23,7 +23,7 @@ import os
 import docker
 import py2neo
 
-_DEFAULT_SLEEP_INCREMENT = 3.0
+_DEFAULT_SLEEP_INCREMENT = 3.5
 
 
 class Neo4jProvisioner(abc.ABC):
@@ -207,6 +207,16 @@ class Neo4jDockerProvisioner:
         return (_running_container, port)
 
     def stop(self, key: str) -> None:
+        """
+        Stop a container with a given key.
+        
+        Arguments:
+            key (str): The key of the container to kill
+           
+        Returns:
+            None
+        
+        """
         self.docker.containers.get(f"tamarind_{key}").stop()
         if not self._autoremove_containers:
             # If autoremove is True, then this is redundant and will fail.
