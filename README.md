@@ -5,6 +5,7 @@
 <a href="https://pypi.org/project/tamarind/"><img alt="PyPI" src="https://img.shields.io/pypi/v/tamarind.svg?logo=python&logoColor=orange&style=for-the-badge"></a>
 <img src="https://img.shields.io/github/issues/FitMango/tamarind.svg?style=for-the-badge" />
 <img src="https://img.shields.io/github/license/FitMango/tamarind.svg?style=for-the-badge" />
+<a href="https://hub.docker.com/layers/neo4j/library/neo4j/4.2"><img src="https://img.shields.io/badge/Neo4j-4.2-9cf?style=for-the-badge" /></a>
 </p>
 
 `tamarind` is a system that manages Neo4j databases by provisioning Docker container resources for you. The user-facing API provides access to a dictionary-like lookup for your databases, and allows you to start and stop database servers on the fly.
@@ -18,7 +19,6 @@ pip3 install tamarind
 ```
 
 You will need Docker already installed if you intend to use the Docker provisioning service. You can install Docker with the script from `https://get.docker.com/`.
-
 
 ## Usage
 
@@ -91,4 +91,3 @@ Licensed under Apache 2.0. Reach out to opensource@fitmango.com with questions.
 ---
 
 <h6 align=center>Made with ❤️ at <a href="https://github.com/fitmango">🥭</a></h6>
-
