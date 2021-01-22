@@ -1,15 +1,16 @@
-- **[0.1.5] (Unreleased)**
-    - Add wait-for-boot capability under `wait` flag
-- **[0.1.4](https://pypi.org/project/tamarind/0.1.4/) (September 4, 2019)**
-    - Fix typo Neo4j version
-- **[0.1.3](https://pypi.org/project/tamarind/0.1.3/) (September 3, 2019)**
-    - Enable custom Docker image specification with `image_name` flag in `start()` call
-    - Upgrade default neo4j distribution to 3.5
-- 0.1.2
-    - Fix pip install dependency management
-- 0.1.1
-    - Optional "run-before" string to execute commands before the neo4j admin commands run, and
-    - Optional "run-after" string to execute commands after the neo4j admin commands run
-    - Add optional mount capability
-- 0.1.0
-
+-   **[0.2.0](January 22, 2021)**
+    -   Upgrade Neo4j to v4.2.2
+-   **[0.1.5](https://pypi.org/project/tamarind/0.1.5/) (September 4, 2019)**
+    -   Add wait-for-boot capability under `wait` flag
+-   **[0.1.4](https://pypi.org/project/tamarind/0.1.4/) (September 4, 2019)**
+    -   Fix typo Neo4j version
+-   **[0.1.3](https://pypi.org/project/tamarind/0.1.3/) (September 3, 2019)**
+    -   Enable custom Docker image specification with `image_name` flag in `start()` call
+    -   Upgrade default neo4j distribution to 3.5
+-   0.1.2
+    -   Fix pip install dependency management
+-   0.1.1
+    -   Optional "run-before" string to execute commands before the neo4j admin commands run, and
+    -   Optional "run-after" string to execute commands after the neo4j admin commands run
+    -   Add optional mount capability
+-   0.1.0

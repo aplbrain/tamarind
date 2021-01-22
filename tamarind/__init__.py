@@ -23,7 +23,7 @@ import os
 import docker
 import py2neo
 
-_DEFAULT_SLEEP_INCREMENT = 3.5
+_DEFAULT_SLEEP_INCREMENT = 3.0
 
 
 class Neo4jProvisioner(abc.ABC):
@@ -61,6 +61,9 @@ class Neo4jProvisioner(abc.ABC):
         return NotImplemented
 
 
+_DEFAULT_PASSWORD = "neo4jpw"
+
+
 class Neo4jDockerProvisioner:
     """
     A database provisioning service that creates docker containers locally.
@@ -77,6 +80,9 @@ class Neo4jDockerProvisioner:
             autoremove_containers (bool: True): Whether to autoremove when done
             initial_heap_size (str): 2G
             max_memory_size (str): 4G
+            password (str): A password to set to protect the database. Default
+                is tamarind._DEFAULT_PASSWORD. You shouldn't rely on this for
+                security, duh!
 
         Returns:
             None
@@ -85,6 +91,7 @@ class Neo4jDockerProvisioner:
         self._autoremove_containers = kwargs.get("autoremove_containers", True)
         self._initial_heap_size = kwargs.get("initial_heap_size", "2G")
         self._max_memory_size = kwargs.get("max_memory_size", "4G")
+        self._password = kwargs.get("password", _DEFAULT_PASSWORD)
         self.docker = docker.from_env()
         self.ports: Dict[str, int] = self.ps()
 
@@ -99,7 +106,7 @@ class Neo4jDockerProvisioner:
             int
 
         """
-        return max([7687, *self.ports.values()]) + 1
+        return max([7686, *self.ports.values()]) + 1
 
     def start(
         self,
@@ -112,7 +119,7 @@ class Neo4jDockerProvisioner:
         mount_browser: bool = False,
         run_before: str = "",
         run_after: str = "",
-        image_name: str = "neo4j:3.5",
+        image_name: str = "neo4j:4.2",
         wait_attempt_limit: int = 20,
     ) -> Tuple[str, int]:
         """
@@ -134,7 +141,7 @@ class Neo4jDockerProvisioner:
                 because Tamarind does not yet support multiport HTTP.
             run_before (str): A bash command to run prior to starting the db.
             run_before (str): A bash command to run prior to starting the db.
-            image_name (str: "neo4j:3.5"): An image to run, if different from
+            image_name (str: "neo4j:4.2"): An image to run, if different from
                 the default Neo4j database image.
             wait_attempt_limit (int: 20): How many times to check the container
                 for signs of life before throwing an error. These are separated
@@ -159,12 +166,16 @@ class Neo4jDockerProvisioner:
             volumes[import_path] = {"bind": "/import", "mode": "ro"}
 
         port = self._next_port()
-        ports = {port: port}
+
+        internal_port = 7687
+
+        ports = {internal_port: port}
         if mount_browser:
             ports[7474] = 7474
+            ports[7473] = 7473
 
         if run_before:
-            run_before += " && "
+            run_before += " ;"
 
         if run_after:
             run_after = " && " + run_after
@@ -172,20 +183,19 @@ class Neo4jDockerProvisioner:
         _running_container = self.docker.containers.run(
             image_name,
             name=f"tamarind_{name}",
-            command=f"""
-            bash -c '{run_before} ./bin/neo4j-admin set-initial-password neo4jpw; ./bin/neo4j start && tail -f /dev/null {run_after}'""",
+            command=f"""bash -c '{run_before} ./bin/neo4j-admin set-initial-password {self._password} && neo4j start {run_after} && tail -f /dev/null'""",
             auto_remove=self._autoremove_containers,
             detach=True,
             environment={
                 "NEO4J_dbms_memory_heap_initial__size": self._initial_heap_size,
                 "NEO4J_dbms_memory_heap_max__size": self._max_memory_size,
-                "NEO4J_dbms_connector_bolt_listen__address": f":{port}",
-                "NEO4J_dbms_connector_bolt_advertised__address": f":{port}",
+                "NEO4J_dbms_connector_bolt_listen__address": f"0.0.0.0:{internal_port}",
+                "NEO4J_dbms_connector_bolt_advertised__address": f"0.0.0.0:{internal_port}",
             },
             volumes=volumes,
             ports=ports,
-            network_mode="bridge",
         )
+
         if wait:
             attempts = 0
             # Loop until you get bored or hit a timeout:
@@ -193,6 +203,10 @@ class Neo4jDockerProvisioner:
             while attempts < wait_attempt_limit:
                 attempts += 1
                 time.sleep(_DEFAULT_SLEEP_INCREMENT)
+                try:
+                    _running_container.reload()
+                except:
+                    raise OSError(f"Container {name} has died.")
                 try:
                     self[name].run("MATCH (a) RETURN a LIMIT 1")
                     break
@@ -209,13 +223,13 @@ class Neo4jDockerProvisioner:
     def stop(self, key: str) -> None:
         """
         Stop a container with a given key.
-        
+
         Arguments:
             key (str): The key of the container to kill
-           
+
         Returns:
             None
-        
+
         """
         self.docker.containers.get(f"tamarind_{key}").stop()
         if not self._autoremove_containers:
@@ -259,5 +273,5 @@ class Neo4jDockerProvisioner:
         """
         cport = self.ps()[f"{key}"]
         return py2neo.Graph(
-            f"bolt://localhost:{cport}", username="neo4j", password="neo4jpw"
+            f"bolt://localhost:{cport}", username="neo4j", password=self._password
         )
