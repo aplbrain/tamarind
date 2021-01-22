@@ -141,7 +141,7 @@ class Neo4jDockerProvisioner:
                 because Tamarind does not yet support multiport HTTP.
             run_before (str): A bash command to run prior to starting the db.
             run_before (str): A bash command to run prior to starting the db.
-            image_name (str: "neo4j:3.5"): An image to run, if different from
+            image_name (str: "neo4j:4.2"): An image to run, if different from
                 the default Neo4j database image.
             wait_attempt_limit (int: 20): How many times to check the container
                 for signs of life before throwing an error. These are separated
@@ -177,13 +177,13 @@ class Neo4jDockerProvisioner:
         if run_before:
             run_before += " ;"
 
-        # if run_after:
-        #     run_after += ";"
+        if run_after:
+            run_after = " && " + run_after
 
         _running_container = self.docker.containers.run(
             image_name,
             name=f"tamarind_{name}",
-            command=f"""bash -c '{run_before} ./bin/neo4j-admin set-initial-password {self._password} && tail -f /dev/null'""",
+            command=f"""bash -c '{run_before} ./bin/neo4j-admin set-initial-password {self._password} && neo4j start {run_after} && tail -f /dev/null'""",
             auto_remove=self._autoremove_containers,
             detach=True,
             environment={
@@ -195,9 +195,6 @@ class Neo4jDockerProvisioner:
             volumes=volumes,
             ports=ports,
         )
-
-        time.sleep(5)
-        print(_running_container.exec_run("./bin/neo4j start", user="neo4j"))
 
         if wait:
             attempts = 0
