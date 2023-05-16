@@ -21,7 +21,7 @@ REQUIRES_PYTHON = ">=3.6.0"
 VERSION = "0.2.0"
 
 # What packages are required for this module to be executed?
-REQUIRED = ["py2neo==2020.1.1", "docker==4.4.1"]
+REQUIRED = ["py2neo", "docker"]
 
 # What packages are suggested for doing development?
 DEVELOPING_REQS = ["pytest", "pylint"]
