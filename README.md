@@ -3,8 +3,8 @@
 <h6 align=center>manage multiple ephemeral neo4j containers</h6>
 <p align=center>
 <a href="https://pypi.org/project/tamarind/"><img alt="PyPI" src="https://img.shields.io/pypi/v/tamarind.svg?logo=python&logoColor=orange&style=for-the-badge"></a>
-<img src="https://img.shields.io/github/issues/FitMango/tamarind.svg?style=for-the-badge" />
-<img src="https://img.shields.io/github/license/FitMango/tamarind.svg?style=for-the-badge" />
+<img src="https://img.shields.io/github/issues/aplbrain/tamarind.svg?style=for-the-badge" />
+<img src="https://img.shields.io/github/license/aplbrain/tamarind.svg?style=for-the-badge" />
 <a href="https://hub.docker.com/layers/neo4j/library/neo4j/4.2"><img src="https://img.shields.io/badge/Neo4j-4.2-9cf?style=for-the-badge" /></a>
 </p>
 
@@ -72,9 +72,9 @@ If you provision Neo4j instances via resources other than Docker (e.g. via AWS E
 
 ## Legal
 
-Licensed under Apache 2.0. Reach out to opensource@fitmango.com with questions.
+Licensed under Apache 2.0. 
 
-> Copyright 2021 FitMango.
+> Copyright 2024 Johns Hopkins University Applied Physics Laboratory
 >
 > Licensed under the Apache License, Version 2.0 (the "License");
 > you may not use this codebase except in compliance with the License.
@@ -88,6 +88,3 @@ Licensed under Apache 2.0. Reach out to opensource@fitmango.com with questions.
 > See the License for the specific language governing permissions and
 > limitations under the License.
 
----
-
-<h6 align=center>Made with ❤️ at <a href="https://github.com/fitmango">🥭</a></h6>
