@@ -1,5 +1,6 @@
 """
-Copyright 2019-2021 FitMango.
+Copyright 2019-2021 FitMango
+          2021-2024 Johns Hopkins University Applied Physics Laboratory
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this codebase except in compliance with the License.
